@@ -1,0 +1,47 @@
+
+#### Tic Tac Toe Game ####
+"""
+* Represent the board as a 9-dimensional array [1, 9].
+
+* Don't care about the sequence of a game, simply score moves against static boards
+    * Illegal moves (no move, place over existing gamepiece) are scored as a "loss" (-1)
+    * Normal moves that don't end the game are score neutrally (0).
+
+* Winning boards are a known quantity. We can use them as masks, multiplied over the 
+  game board at the end of a move to identify a game winning move. 
+  
+* Starting player is randomized with each game.
+
+* Game should provide feedback at the end of the turn:
+    * Player N placed X/O at Position M.
+    * Move Score = X
+    * Game Finished/Not Finished
+    
+* Player move entered as a digit in range 0-8, mapping to placement on the board.
+"""
+
+#~~~~~~~~~~~~~~~~~~~~~~
+#### Get libraries ####
+#~~~~~~~~~~~~~~~~~~~~~~
+
+import pandas as pd
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Build game boards ####
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Initialize the game with an empty board
+game_board = [0] * 9
+
+# Define winning game boards. 
+# NOTE: This might be more efficient as a matrix!!!
+winning_boards = []
+winning_boards.append([1, 1, 1, 0, 0, 0, 0, 0, 0])
+winning_boards.append([0, 0, 0, 1, 1, 1, 0, 0, 0])
+winning_boards.append([0, 0, 0, 0, 0, 0, 1, 1, 1])
+winning_boards.append([1, 0, 0, 1, 0, 0, 1, 0, 0])
+winning_boards.append([0, 1, 0, 0, 1, 0, 0, 1, 0])
+winning_boards.append([0, 0, 1, 0, 0, 1, 0, 0, 1])
+winning_boards.append([1, 0, 0, 0, 1, 0, 0, 0, 1])
+winning_boards.append([0, 0, 1, 0, 1, 0, 1, 0, 0])
