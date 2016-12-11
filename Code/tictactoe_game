@@ -5,7 +5,7 @@
 
 * Don't care about the sequence of a game, simply score moves against static boards
     * Illegal moves (no move, place over existing gamepiece) are scored as a "loss" (-1)
-    * Normal moves that don't end the game are score neutrally (0).
+    * Normal moves that don't end the game are scored neutrally (0).
 
 * Winning boards are a known quantity. We can use them as masks, multiplied over the 
   game board at the end of a move to identify a game winning move. 
@@ -26,6 +26,7 @@
 
 import pandas as pd
 import numpy as np
+import random
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Define Functions and baseline variables ####
@@ -74,3 +75,7 @@ def check_for_winning_board(current_board, winning_board_templates = winning_boa
 
 # Initialize the game with an empty board
 game_board = [0] * 9
+
+# Randomly select a player to start
+players = [-1, 1]
+current_player = random.choice(players)
