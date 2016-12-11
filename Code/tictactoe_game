@@ -25,7 +25,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~
 
 import pandas as pd
-
+import numpy as np
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Build game boards ####
@@ -34,14 +34,35 @@ import pandas as pd
 # Initialize the game with an empty board
 game_board = [0] * 9
 
-# Define winning game boards. 
-# NOTE: This might be more efficient as a matrix!!!
-winning_boards = []
-winning_boards.append([1, 1, 1, 0, 0, 0, 0, 0, 0])
-winning_boards.append([0, 0, 0, 1, 1, 1, 0, 0, 0])
-winning_boards.append([0, 0, 0, 0, 0, 0, 1, 1, 1])
-winning_boards.append([1, 0, 0, 1, 0, 0, 1, 0, 0])
-winning_boards.append([0, 1, 0, 0, 1, 0, 0, 1, 0])
-winning_boards.append([0, 0, 1, 0, 0, 1, 0, 0, 1])
-winning_boards.append([1, 0, 0, 0, 1, 0, 0, 0, 1])
-winning_boards.append([0, 0, 1, 0, 1, 0, 1, 0, 0])
+# Define winning game boards.
+winning_boards = np.matrix([[1, 1, 1, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 1, 1, 1, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 1, 1, 1],
+                            [1, 0, 0, 1, 0, 0, 1, 0, 0],
+                            [0, 1, 0, 0, 1, 0, 0, 1, 0],
+                            [0, 0, 1, 0, 0, 1, 0, 0, 1],
+                            [1, 0, 0, 0, 1, 0, 0, 0, 1],
+                            [0, 0, 1, 0, 1, 0, 1, 0, 0]])
+
+
+# Test a game board against winning boards
+def check_for_winning_board(current_board, winning_board_templates = winning_boards):
+    # Arguments:
+    # current_board: A list of length 9 reflecting the current state of the game board. 
+    #                Function assumes player positions are flagged with -1 and 1. 0 is empty.
+    # winning_board_template: a matrix of the winning board possibilities
+    
+    # Use a dot product to mask the current board with the winning boards.
+    mask_boards = np.dot(winning_board_templates, np.transpose(current_board))
+    # If any mask returns a -3 or 3 (player -1 wins or player 1 wins), return True
+    eval_win = any(map(lambda each: each in mask_boards, [-3, 3]))
+    # Return the result
+    return(eval_win);
+
+# A sample board to test the function:
+# sample_board = [1, 0, 1, -1, 1, -1, -1, -1, 0]
+# print(check_for_winning_board(current_board= sample_board))
+
+
+
+
