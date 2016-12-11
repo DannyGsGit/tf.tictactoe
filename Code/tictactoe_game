@@ -67,6 +67,13 @@ def check_winning_board(new_board, winning_board_templates = winning_boards):
 # print(check_for_winning_board(current_board= sample_board))
 
 
+
+
+
+
+
+
+
 # Check for an illegal move
 def check_illegal_move(current_board, new_move):
     # Arguments:
@@ -105,6 +112,15 @@ def check_illegal_move(current_board, new_move):
 
 
 
+# Display the board in readable format
+def display_board(current_board):
+    display_format = np.reshape(sample_board, (3, 3))
+    return(display_format);
+
+
+
+
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Initialize the game ####
@@ -116,3 +132,14 @@ game_board = [0] * 9
 # Randomly select a player to start
 players = [-1, 1]
 current_player = random.choice(players)
+
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Run through the game ####
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
