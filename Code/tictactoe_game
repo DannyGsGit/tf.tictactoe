@@ -1,16 +1,16 @@
 
 #### Tic Tac Toe Game ####
 """
-* Represent the board as a 9-dimensional array [1, 9].
+*[C] Represent the board as a 9-dimensional array [1, 9].
 
 * Don't care about the sequence of a game, simply score moves against static boards
     * Illegal moves (no move, place over existing gamepiece) are scored as a "loss" (-1)
     * Normal moves that don't end the game are scored neutrally (0).
 
-* Winning boards are a known quantity. We can use them as masks, multiplied over the 
+*[C] Winning boards are a known quantity. We can use them as masks, multiplied over the 
   game board at the end of a move to identify a game winning move. 
   
-* Starting player is randomized with each game.
+*[C] Starting player is randomized with each game.
 
 * Game should provide feedback at the end of the turn:
     * Player N placed X/O at Position M.
@@ -44,26 +44,63 @@ winning_boards = np.matrix([[1, 1, 1, 0, 0, 0, 0, 0, 0],
 
 
 # Evaluate a game board against winning boards
-def check_for_winning_board(current_board, winning_board_templates = winning_boards):
+def check_winning_board(new_board, winning_board_templates = winning_boards):
     # Arguments:
-    # current_board: A list of length 9 reflecting the current state of the game board. 
+    # new_board: A list of length 9 reflecting the current state of the game board. 
     #                Function assumes player positions are flagged with -1 and 1. 0 is empty.
     # winning_board_template: a matrix of the winning board possibilities
     #
     # Returns:
     # A boolean True/False depending on whether a win is found
-    #
-    # A sample board to test the function:
-    # sample_board = [1, 0, 1, -1, 1, -1, -1, -1, 0]
-    # print(check_for_winning_board(current_board= sample_board))
     
     # Use a dot product to mask the current board with the winning boards.
     mask_boards = np.dot(winning_board_templates, np.transpose(current_board))
+    
     # If any mask returns a -3 or 3 (player -1 wins or player 1 wins), return True
     eval_win = any(map(lambda each: each in mask_boards, [-3, 3]))
+    
     # Return the result
     return(eval_win);
 
+# A sample board to test the function:
+# sample_board = [1, 0, 1, -1, 1, -1, -1, -1, 0]
+# print(check_for_winning_board(current_board= sample_board))
+
+
+# Check for an illegal move
+def check_illegal_move(current_board, new_move):
+    # Arguments:
+    # current_board: The board (9-dim list) before the move was made
+    # new_move: The new move being made, one-hot format (i.e. 9-dim list)
+    #
+    # Returns:
+    # boolean True if illegal move is present, False if the move is legal
+    
+    # Mask the board and the move. If the move overlays a current piece, 
+    # we will get a -1 or 1. Legal moves == 0.
+    overlap_move = np.dot(current_board, np.transpose(new_move))
+    
+    # Check for a non-move. 0 means no move was made.
+    did_you_move = sum(new_move)
+    
+    # Prepare the result
+    if (overlap_move != 0 or did_you_move == 0):
+        illegal = True
+    else:
+        illegal = False
+    
+    # Return result
+    return(illegal);
+
+# Test the function:
+# sample_board = [1, 0, 1, -1, 1, -1, -1, -1, 0]
+# overlap_move = [0, 0, 0, 1, 0, 0, 0, 0, 0]
+# no_move = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+# good_move = [0, 1, 0, 0, 0, 0, 0, 0, 0]
+#
+# check_illegal_move(current_board= sample_board, new_move= overlap_move)
+# check_illegal_move(current_board= sample_board, new_move= no_move)
+# check_illegal_move(current_board= sample_board, new_move= good_move)
 
 
 
