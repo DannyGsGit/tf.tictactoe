@@ -27,12 +27,9 @@
 import pandas as pd
 import numpy as np
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#### Build game boards ####
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# Initialize the game with an empty board
-game_board = [0] * 9
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Define Functions and baseline variables ####
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Define winning game boards.
 winning_boards = np.matrix([[1, 1, 1, 0, 0, 0, 0, 0, 0],
@@ -45,12 +42,19 @@ winning_boards = np.matrix([[1, 1, 1, 0, 0, 0, 0, 0, 0],
                             [0, 0, 1, 0, 1, 0, 1, 0, 0]])
 
 
-# Test a game board against winning boards
+# Evaluate a game board against winning boards
 def check_for_winning_board(current_board, winning_board_templates = winning_boards):
     # Arguments:
     # current_board: A list of length 9 reflecting the current state of the game board. 
     #                Function assumes player positions are flagged with -1 and 1. 0 is empty.
     # winning_board_template: a matrix of the winning board possibilities
+    #
+    # Returns:
+    # A boolean True/False depending on whether a win is found
+    #
+    # A sample board to test the function:
+    # sample_board = [1, 0, 1, -1, 1, -1, -1, -1, 0]
+    # print(check_for_winning_board(current_board= sample_board))
     
     # Use a dot product to mask the current board with the winning boards.
     mask_boards = np.dot(winning_board_templates, np.transpose(current_board))
@@ -59,10 +63,14 @@ def check_for_winning_board(current_board, winning_board_templates = winning_boa
     # Return the result
     return(eval_win);
 
-# A sample board to test the function:
-# sample_board = [1, 0, 1, -1, 1, -1, -1, -1, 0]
-# print(check_for_winning_board(current_board= sample_board))
 
 
 
 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Initialize the game ####
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Initialize the game with an empty board
+game_board = [0] * 9
