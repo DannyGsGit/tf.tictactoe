@@ -27,6 +27,7 @@
 import pandas as pd
 import numpy as np
 import random
+import sys
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Define Functions and baseline variables ####
@@ -114,7 +115,7 @@ def check_illegal_move(current_board, new_move):
 
 # Display the board in readable format
 def display_board(current_board):
-    display_format = np.reshape(sample_board, (3, 3))
+    display_format = np.reshape(current_board, (3, 3))
     return(display_format);
 
 
@@ -127,7 +128,8 @@ def display_board(current_board):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Initialize the game with an empty board
-game_board = [0] * 9
+game_board = np.array([0] * 9)
+
 
 # Randomly select a player to start
 players = [-1, 1]
@@ -140,6 +142,26 @@ current_player = random.choice(players)
 #### Run through the game ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+# Display the board to the player
+print("Current Board:", "\n", display_board(game_board))
+print("Choose Position:", "\n", display_board(list(range(0,9))))
 
+# Get input from player
+position = int(input("Enter Position (0-8): "))
 
+# Encode the move
+entered_move = np.array([0] * 9)
+entered_move[position] = current_player
+
+# Generate new board
+new_game_board = game_board + entered_move
+
+# Evaluate illegal move
+illegal_move = check_illegal_move(current_board = game_board, new_move = entered_move)
+
+# Evaluate win
+winning_move = check_winning_board(new_board = new_game_board)
+
+# Evaluate end of game
+end_game = not any(map(lambda each: each in new_game_board, [0]))
 
