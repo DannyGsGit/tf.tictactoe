@@ -27,25 +27,15 @@
 import pandas as pd
 import numpy as np
 import random
-import sys
+
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Define Functions and baseline variables ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# Define winning game boards.
-winning_boards = np.matrix([[1, 1, 1, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 1, 1, 1, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 1, 1, 1],
-                            [1, 0, 0, 1, 0, 0, 1, 0, 0],
-                            [0, 1, 0, 0, 1, 0, 0, 1, 0],
-                            [0, 0, 1, 0, 0, 1, 0, 0, 1],
-                            [1, 0, 0, 0, 1, 0, 0, 0, 1],
-                            [0, 0, 1, 0, 1, 0, 1, 0, 0]])
-
-
 # Evaluate a game board against winning boards
-def check_winning_board(new_board, winning_board_templates = winning_boards):
+def check_winning_board(new_board, winning_board_templates):
     # Arguments:
     # new_board: A list of length 9 reflecting the current state of the game board. 
     #                Function assumes player positions are flagged with -1 and 1. 0 is empty.
@@ -55,23 +45,13 @@ def check_winning_board(new_board, winning_board_templates = winning_boards):
     # A boolean True/False depending on whether a win is found
     
     # Use a dot product to mask the current board with the winning boards.
-    mask_boards = np.dot(winning_board_templates, np.transpose(current_board))
+    mask_boards = np.dot(winning_board_templates, np.transpose(new_board))
     
     # If any mask returns a -3 or 3 (player -1 wins or player 1 wins), return True
     eval_win = any(map(lambda each: each in mask_boards, [-3, 3]))
     
     # Return the result
     return(eval_win);
-
-# A sample board to test the function:
-# sample_board = [1, 0, 1, -1, 1, -1, -1, -1, 0]
-# print(check_for_winning_board(current_board= sample_board))
-
-
-
-
-
-
 
 
 
@@ -100,26 +80,12 @@ def check_illegal_move(current_board, new_move):
     # Return result
     return(illegal);
 
-# Test the function:
-# sample_board = [1, 0, 1, -1, 1, -1, -1, -1, 0]
-# overlap_move = [0, 0, 0, 1, 0, 0, 0, 0, 0]
-# no_move = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-# good_move = [0, 1, 0, 0, 0, 0, 0, 0, 0]
-#
-# check_illegal_move(current_board= sample_board, new_move= overlap_move)
-# check_illegal_move(current_board= sample_board, new_move= no_move)
-# check_illegal_move(current_board= sample_board, new_move= good_move)
-
-
 
 
 # Display the board in readable format
 def display_board(current_board):
     display_format = np.reshape(current_board, (3, 3))
     return(display_format);
-
-
-
 
 
 
@@ -131,9 +97,29 @@ def display_board(current_board):
 game_board = np.array([0] * 9)
 
 
+
+# Define winning game boards
+winning_boards = np.matrix([[1, 1, 1, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 1, 1, 1, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 1, 1, 1],
+                            [1, 0, 0, 1, 0, 0, 1, 0, 0],
+                            [0, 1, 0, 0, 1, 0, 0, 1, 0],
+                            [0, 0, 1, 0, 0, 1, 0, 0, 1],
+                            [1, 0, 0, 0, 1, 0, 0, 0, 1],
+                            [0, 0, 1, 0, 1, 0, 1, 0, 0]])
+
+
+
+
 # Randomly select a player to start
-players = [-1, 1]
+players = np.array([-1, 1])
 current_player = random.choice(players)
+
+
+
+# Game in progress flag
+continue_game = True
+
 
 
 
@@ -142,26 +128,80 @@ current_player = random.choice(players)
 #### Run through the game ####
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# Display the board to the player
-print("Current Board:", "\n", display_board(game_board))
-print("Choose Position:", "\n", display_board(list(range(0,9))))
+while continue_game == True:
+    ## Make the move
+    # Display the board to the player
+    print("\n", "\n", "\n", "Your turn Player ", current_player)
+    print("Current Board:", "\n", display_board(game_board))
+    print("Choose Position:", "\n", display_board(list(range(0,9))))
+    
+    # Get input from player
+    position = input("Enter Position (0-8): ")
+    
+    
+    ## Process the move
+    # One-hot encode the move, and validate the input
+    entered_move = np.array([0] * 9)
+    try:
+        position = int(position)
+        if (position >= 0 and position <= 8):
+            entered_move[position] = current_player
+    except ValueError:
+        print("You didn't input a valid number")
+        
+    # Generate new board
+    new_game_board = game_board + entered_move
+    
+    
+    ## Run through evaluations
+    # Evaluate illegal move
+    illegal_move = check_illegal_move(current_board = game_board, new_move = entered_move)
+    
+    # Evaluate win
+    winning_move = check_winning_board(new_board = new_game_board, winning_board_templates = winning_boards)
+    
+    # Evaluate end of game
+    end_game = not any(map(lambda each: each in new_game_board, [0]))
+    
+    
+    ## Scoring
+    if illegal_move == True:
+        score = -1
+        continue_game = False
+        print("Illegal move, automatic loss", "\n", "Score = -1")
+    elif winning_move == True:
+        score = 1
+        continue_game = False
+        print("Winning move", "\n", "Score = 1")
+    elif (end_game == True and winning_move == False and illegal_move == False):
+        score = 0
+        continue_game = False
+        print("End game, no winners", "\n", "Score = 0")
+    else:
+        score = 0
+        continue_game = True
+    
+    ## Prep for the next turn
+    if continue_game == True:
+        # Make the "new" board the game board
+        game_board = new_game_board
+        # Swap players
+        current_player = int(players[players != current_player])
 
-# Get input from player
-position = int(input("Enter Position (0-8): "))
 
-# Encode the move
-entered_move = np.array([0] * 9)
-entered_move[position] = current_player
 
-# Generate new board
-new_game_board = game_board + entered_move
 
-# Evaluate illegal move
-illegal_move = check_illegal_move(current_board = game_board, new_move = entered_move)
 
-# Evaluate win
-winning_move = check_winning_board(new_board = new_game_board)
 
-# Evaluate end of game
-end_game = not any(map(lambda each: each in new_game_board, [0]))
+
+
+
+
+
+
+
+
+
+
+
 
